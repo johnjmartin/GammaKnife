@@ -20,6 +20,7 @@ oarCentre = [0,30,45]; %mm
 % setting beam list Helmet: [beam_separation_angle = 10 degrees, beam_radius = 15 mm]
 beamLongitudeList = [];
 beamLatitudeList = [];
+beamRadius = 1.5;
 
 for i = 0:35
     if (i < 10)
@@ -82,14 +83,10 @@ depth_dose_table = computeDepthDose(max_depth_from_skin,d0,...
 % computeRadialDose.m 
 % Running the function, printing LUT, showing that my values match the
 % graph
-% Beam radius is a global
-% 
-beamRadius = 15;
+%function radialDoseLUT = computeRadialDose( maxRadialDistance, beamRadius, radialDistanceResolution )
 
-maxRadialDistance = 1.5 * beamRadius;
-radialDistanceResolution = 1;
-radial_dose_table = computeRadialDose(maxRadialDistance, beamRadius,... 
-radialDistanceResolution)
+maxRadialDistance
+radial_dose_table = computeRadialDose( maxRadialDistance, beamRadius, radialDistanceResolution )
 
 
 

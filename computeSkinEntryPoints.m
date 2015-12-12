@@ -1,21 +1,25 @@
-% Function used to compute where the Gamma Knife x-ray will go through the
-% person's skin. This function creates a line from the isocenter(tumor) and
-% the point on the helmet determined by the longitude and latitude of source
-% and radius of Gamma Knife. It then finds the intersection of this line
-% and the head, defined as an elipsoid with 3 axis, A, B, and C. It then
-% determines which of the (probable) 2 intersection points is closer to the
-% source, and uses that as the skin entry point.
-%
-% Inputs: Ellipsoid of head given as [A,B,C] vertices (head)
-%         Longitude of beam source (long)
-%         Latitude of beam source (lat)
-%         Center of hemisphere helmet (isocenter)
-%         Radius of Gamma Knife helmet (radius)
-%
-% Output: Calculated skin entry point (EntryPoint)
+function [Intersection] = question4(L1, L2, A, B, C)
+%find the vector equation of our line
+line = twoPointLineEq(L1, L2);
+syms t;
+%subbing the line equation into the elipsoid equation, solve for tVal
+tVal = solve((line(1)^2)/A^2 + (line(2)^2)/B^2 + (line(3)^2)/C^2 - 1);
+%if the values are the same the line is tangent to the sphere, only one
+%intersection point
+if tVal(1) ==tVal(2)
+    tVal = tVal(1);
+end
+Intersection = subs(line, t, tVal);
+d = digits(2);
+Intersection = vpa(Intersection,d);
+end
 
-function [EntryPoint] = computeSkinEntryPoint(head, long, lat, isocenter, radius)
+function line = twoPointLineEq(L1, L2)
+syms t;
+line = L1 + t*((L2-L1)/norm(L2-L1));
+end
 
+function [EntryPoint] = computeSkinEntryPoints(head, long, lat, isocenter, radius)
     % convert longitude and latitutde to radians.
     long = degtorad(long);
     lat = degtorad(lat);
@@ -30,7 +34,7 @@ function [EntryPoint] = computeSkinEntryPoint(head, long, lat, isocenter, radius
     y = radius .* cos(lat) .* sin(long);
     z = radius .* sin(lat);
     
-    Point = [x,y,z]
+    Point = [x,y,z];
     
     % Calls question 4, assignment 1. Intersection of ellipsoid and line.
     % Outputs the two found intersections.

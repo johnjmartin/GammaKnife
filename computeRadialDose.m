@@ -1,33 +1,21 @@
-function [ radialDoseLUT ] = computeRadialDose( maxRadialDistance, beamRadius, radialDistanceResolution )
-%COMPUTERADIALDOSE Summary of this function goes here
-%   Detailed explanation goes here
-    depthP1 = [0.5,1];
-    depthP2 = [1.5,0];
-        
-    %round to ceiling to account for all dose possibilities and maintaining
-    %an int
-    numberOfEntries = ceil(maxRadialDistance/radialDistanceResolution);
-    radialDoseLUT = zeros(numberOfEntries,2);
-    
-    radialZeroEntries = floor((beamRadius/2)/radialDistanceResolution);
+%{
+Compute raidial dose, this function returns a table with the distance from
+the beam as the first row, and each corresponding dose values at the next value
+%}
+function radialDoseLUT = computeRadialDose( max_distance, beamRadius, radial_resolution )
 
-    for i = 1:(radialZeroEntries + 1)
-        radialDoseLUT(i,1) = (i * radialDistanceResolution) - 1;
-        radialDoseLUT(i,2) = 1;
+radialDoseLUT = [];
+for radius = 1: radial_resolution: max_distance
+    x = radius/beamRadius;
+    if (x >= 0 && x <= 0.5)
+        depthDoseAtX = 1;
     end
-    
-    radialHalfEntries = ceil(maxRadialDistance/radialDistanceResolution);
-
-    for i = (radialZeroEntries + 2):(1.5 * beamRadius + 1)
-        disp((i - radialZeroEntries)/beamRadius);
-        radialDoseLUT(i,1) = (i * radialDistanceResolution) - 1;
-        radialDoseLUT(i,2) = computeLinearFunction(depthP1, depthP2, (i - 1)/beamRadius );
+    if (x > 0.5)
+        depthDoseAtX = computeLinearFunction([0.5, 1], [1.5, 0], x);
     end
-
-    for i = ceil(1.5 * beamRadius + 1):(radialHalfEntries + 1)
-        radialDoseLUT(i,1) = (i * radialDistanceResolution) - 1;
-        radialDoseLUT(i,2) = 0;
+    if (x > 1.5)
+        depthDoseAtX = 0;
     end
-
+    radialDoseLUT = [radialDoseLUT,[radius; depthDoseAtX]];
 end
 
