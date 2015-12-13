@@ -1,21 +1,19 @@
+function safe = computeBeamSafety(beamRadius, beamLongitude, beamLatitude, isocenterPoint, OAR)
 
+    beamVector = computeBeamDirectionVector(beamLongitude, beamLatitude);
 
-function safe = computeBeamSafety(beamRadius, beam_longitude, beam_latitude, isocenter_point, OARradius, OARcenter)
-beamVector = computeBeamDirectionVector(beam_longitude, beam_latitude);
-%adding the point to the first 3 indices of the array
-beamLine = [isocenter_point, beamVector];
-%function distance = computeRadialDistance(point, line)
+    beamLine = [isocenterPoint, beamVector];
 
-distance = computeRadialDistance(OARcenter, beamLine);
-overlap = OARradius + beamRadius;
-if (distance > overlap)   
-    safe = 1;
-    return;
-end
-if (distance == overlap)
-    safe = 0;
-    return;
-end
-safe = -1;
+    distance = computeRadialDistance(OAR(2:4), beamLine);
+    overlap = OAR(1) + beamRadius;
+
+    if (distance > overlap)   
+        safe = 1;
+        return;
+    end
+    if (distance <= overlap)
+        safe = 0;
+        return;
+    end
 
 end
