@@ -18,11 +18,11 @@ function [ pointDoseValue ] = computePointDose( head, helmet, OAR, isocentrePoin
        
     
     for lon = 1:totalLon
-        for lat = 1:totalLat
+        for lat = 1:(totalLat+1)
             %beam is safe, can be used
             if(safetyTable(lat+1,lon+1)) == 1
                 pointDoseValue = pointDoseValue + ...
-                computePointDosefromBeam( head, helmet(2), (lon+1)*helmet(1), (lat+1)*helmet(1), isocentrePoint, pointOfInterest );
+                computePointDosefromBeam( head, helmet(2), (lon-1)*helmet(1), (lat-1)*helmet(1), isocentrePoint, pointOfInterest );
             end              
         end
     end

@@ -1,17 +1,28 @@
-function depthDoseLUT = computeDepthDose(max_depth, d0, depth_resolution)
+function [ depthDoseLUT ] = computeDepthDose( maxDepthFromSkin, d0, depthFromSkinResolution )
+%UNTITLED4 Summary of this function goes here
+%   Detailed explanation goes here
+    global depthP1;
+    global depthP2;
+    global depthP3;
+        
+    %round to ceiling to account for all dose possibilities and maintaining
+    %an int
+    numberOfEntries = ceil(maxDepthFromSkin/depthFromSkinResolution);
+    depthDoseLUT = zeros(numberOfEntries,2);    
+    
+    depthZeroEntries = floor(d0/depthFromSkinResolution);
 
-depthDoseLUT = [];
+    for i = 1:(depthZeroEntries + 1)
+        depthDoseLUT(i,1) = (i  - 1)/d0;
+        depthDoseLUT(i,2) = computeLinearFunction(depthP1, depthP2, (i - 1)/d0);
+    end
+    
+    depthd0Entries = ceil(maxDepthFromSkin/depthFromSkinResolution);
 
-for depth = 1: depth_resolution: max_depth
-    x = depth/d0;
-    if (x >= 0 && x <= 1)
-        depthDoseAtX = computeLinearFunction([0,0], [1,1], x);
+    for i = (depthZeroEntries + 2):(depthd0Entries + 1)
+        depthDoseLUT(i,1) = (i  - 1)/d0;
+        depthDoseLUT(i,2) = computeLinearFunction(depthP2, depthP3, (i - 1)/d0 );
     end
-    if (x > 1)
-        depthDoseAtX = computeLinearFunction([1,1], [6, 0.5], x);
-    end
-    if (x < 0)
-        depthDoseAtX = 0;
-    end
-    depthDoseLUT = [depthDoseLUT,[depth;depthDoseAtX]];
+            
 end
+

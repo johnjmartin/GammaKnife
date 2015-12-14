@@ -19,7 +19,7 @@ function [ pointDoseValue ] = computePointDosefromBeam( head, beamRadius, beamLo
         pointOnBeam = skinEntryPoint + t.*beamDirection;
         depth = norm(skinEntryPoint - pointOnBeam);
         depthIndex = findTableIndex(depth/d0,depthDoseTable(:,1)); 
-        depthDose = depthDoseTable(depthIndex);
+        depthDose = depthDoseTable(depthIndex,2);
         pointDoseValue = radialDose * depthDose;
     else
         pointDoseValue = 0;
